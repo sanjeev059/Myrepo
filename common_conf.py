@@ -2,6 +2,7 @@ import os
 import xml.etree.ElementTree as et
 import argparse
 import subprocess
+import datetime
 
 try:
     from configparser import ConfigParser
@@ -10,12 +11,13 @@ except ImportError:
 
 
 
-def branch_cut(var_arg1,var_arg2):
+def branch_cut(var_arg1,var_arg2,rel_date):
     base_path = '/Users/sanjeev.d/workspace/test_paths'
     clone_path = os.path.join(base_path,var_arg1)
     print var_arg1
     print clone_path
-    branch = 'rel/branch_cut'
+    branch = 'rel/'+rel_date
+    print branch
     #print branch
 
     #git_b = 'git checkout develop  && git pull origin develop && git checkout -b {branch}'2
@@ -33,15 +35,21 @@ def branch_cut(var_arg1,var_arg2):
         subprocess.check_output("git checkout -b "+branch, shell=True)
         subprocess.check_output("git push -u origin "+branch+':'+branch, shell=True)
 
-def read_urls():
+def read_urls(wed):
     config = ConfigParser()
     config.read("urls.ini")
     read_recs = ['api','core','http','bdi','edi','presence','notify','orders','items','contracts','unity']
     for rec in read_recs:
         url = config.get('url',rec)
         #print rec+":"+url
-        branch_cut(rec,url)
+        branch_cut(rec,url,release_date)
 
+
+def next_weekday(d, weekday):
+    days_ahead = weekday - d.weekday()
+    if days_ahead <= 0: # Target day already happened this week
+        days_ahead += 7
+    return d + datetime.timedelta(days_ahead)
 
 def main():
 
@@ -51,6 +59,12 @@ def main():
     #args = parser.parse_args()
     #print_agrs(args.component,args.branch)
 
-    read_urls()
+    d = datetime.datetime.now()
+    next_wednesday = next_weekday(d, 2) # 0 = Monday, 1=Tuesday, 2=Wednesday...
+    next_wednesday_str = next_wednesday.strftime('%Y.%m.%d')
+    print next_wednesday_str
+    wed = next_wednesday_str
+    read_urls(wed)
+
 if __name__ == "__main__":
     main()
