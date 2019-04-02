@@ -36,6 +36,7 @@ def branch_cut(var_arg1,var_arg2,rel_date):
         subprocess.check_output("git push -u origin "+branch+':'+branch, shell=True)
 
 def read_urls(wed):
+    release_date = wed
     config = ConfigParser()
     config.read("urls.ini")
     read_recs = ['api','core','http','bdi','edi','presence','notify','orders','items','contracts','unity']
