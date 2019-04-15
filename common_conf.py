@@ -16,7 +16,7 @@ def branch_cut(var_arg1,var_arg2,rel_date):
     clone_path = os.path.join(base_path,var_arg1)
     print var_arg1
     print clone_path
-    branch = 'rel/'+rel_date
+    branch = 'release/'+rel_date
     print branch
     #print branch
 
