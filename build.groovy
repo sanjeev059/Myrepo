@@ -17,7 +17,7 @@ pipeline {
         stage('DB Automation'){
           steps{
             script{
-            //slackSend (channel: "#release-engg", color: '#FFFF00', message: "nightly build started\nbuild_url:(${env.BUILD_URL})")
+            slackSend (channel: "#release-engg", color: '#FFFF00', message: "nightly build started\nbuild_url:(${env.BUILD_URL})")
             git branch: 'develop', url: 'ssh://git@lab.turvo.net:7999/dev/api.git'
             def commit = sh 'git rev-parse HEAD > commit'
             def commit1 = readFile('commit').trim()
@@ -25,26 +25,37 @@ pipeline {
             def jobBuild = build job: 'mysql-db-automation',propagate: true, parameters: [[$class: 'StringParameterValue', name: 'STACK', value: "${env}"]]
             def jobResult = jobBuild.getResult()
             slackSend (channel: "#release-engg", color: '#FFFF00', message: "•Build of 'mysql-db-automation'\n •returned result: ${jobResult}\n•${commit1}")
-            echo "Build of 'mysql-db-automation' returned result: ${jobResult}"
-            //def buildResult['testJob'] = jobResult
+            def reslog = jobBuild.rawBuild.log
+            println reslog
             if (jobResult != 'SUCCESS') {
-                        error("testJob failed with result: ${jobResult}")
+                slackSend (channel: "#release-engg", color: '#FFFF01', message: "•Build of 'mysql-db-automation'\n •returned result: ${jobResult}\n•${commit1}")
+                error("mysql-db-automatio failed with result: ${jobResult}")
                     }
+
+
 
             def jobBuild1 = build job: 'mongeez-db-automation',propagate: true, parameters: [[$class: 'StringParameterValue', name: 'STACK', value: "${env}"]]
             def jobResult1 = jobBuild.getResult()
-            //send slack message
+            slackSend (channel: "#release-engg", color: '#FFFF00', message: "•Build of 'mongeez-db-automation'\n •returned result: ${jobResult}\n•${commit1}")
             echo "Build of 'mysql-db-automation' returned result: ${jobResult}"
-            //def buildResult['testJob'] = jobResult
             if (jobResult != 'SUCCESS') {
+            slackSend (channel: "#release-engg", color: '#FFFF01', message: "•Build of 'mongeez-db-automation'\n •returned result: ${jobResult}\n•${commit1}")
                         error("testJob failed with result: ${jobResult}")
                     }
+
+
+
+            git branch: 'develop', url: 'ssh://git@lab.turvo.net:7999/dev/api.git'
+            def commit_core = sh 'git rev-parse HEAD > commit_core'
+            def commit_core_res = readFile('commit_core').trim()
+
             def jobBuild2 = build job: 'connect-core-db-automation',propagate: true, parameters: [[$class: 'StringParameterValue', name: 'STACK', value: "${env}"]]
             def jobResult2 = jobBuild.getResult()
-            //send slack message
+            slackSend (channel: "#release-engg", color: '#FFFF00', message: "•Build of 'connect-core-db-automation'\n •returned result: ${jobResult}\n•${commit_core_res}")
             echo "Build of 'mysql-db-automation' returned result: ${jobResult}"
             //def buildResult['testJob'] = jobResult
             if (jobResult != 'SUCCESS') {
+            slackSend (channel: "#release-engg", color: '#FFFF01', message: "•Build of 'connect-core-db-automation'\n •returned result: ${jobResult}\n•${commit_core_res}")
                         error("testJob failed with result: ${jobResult}")
             }
           }
