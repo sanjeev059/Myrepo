@@ -26,6 +26,7 @@ def branch_cut(var_arg1,var_arg2,rel_date):
         os.chdir(clone_path)
         os.system('git checkout develop  && git pull origin develop')
         subprocess.check_output("git checkout -b "+branch, shell=True)
+        change_turvo_config(base_path)
         subprocess.check_output("git push -u origin "+branch+':'+branch, shell=True)
         #os.system('git push -u origin test_2019.03.27:test_2019.03.27')
     else:
@@ -39,7 +40,7 @@ def read_urls(wed):
     release_date = wed
     config = ConfigParser()
     config.read("urls.ini")
-    read_recs = ['api','core','http','bdi','edi','presence','notify','orders','items','contracts','unity']
+    read_recs = ['common-config','api','core','http','bdi','edi','presence','notify','orders','items','contracts','unity','config']
     for rec in read_recs:
         url = config.get('url',rec)
         #print rec+":"+url
@@ -51,6 +52,15 @@ def next_weekday(d, weekday):
     if days_ahead <= 0: # Target day already happened this week
         days_ahead += 7
     return d + datetime.timedelta(days_ahead)
+
+
+def change_turvo_config(base_path):
+    pom_path = ['api/saahas-maven/pom.xml',]
+    api_pom = os.join(base_path, 'api/saahas-maven/pom.xml')
+    subprocess.check_output("sed 's/2.0.24-SNAPSHOT/2.0.25/g' api_pom > new.xml")
+    subprocess.check_output(" mv new.xml api_pom")
+
+
 
 def main():
 
@@ -66,6 +76,8 @@ def main():
     print next_wednesday_str
     wed = next_wednesday_str
     read_urls(wed)
+
+    change_turvo_config()
 
 if __name__ == "__main__":
     main()

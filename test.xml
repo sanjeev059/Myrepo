@@ -1,0 +1,95 @@
+<ns0:project xmlns:ns0="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <ns0:modelVersion>4.0.0</ns0:modelVersion>
+
+    <ns0:groupId>com.turvo</ns0:groupId>
+    <ns0:artifactId>turvo-configuration</ns0:artifactId>
+    <ns0:version>2.0.25</ns0:version>
+    <ns0:packaging>jar</ns0:packaging>
+    <ns0:name>Turvo Platform Configuration</ns0:name>
+    <ns0:description>Configuration resources for the Turvo platform</ns0:description>
+
+    <ns0:dependencies>
+        <ns0:dependency>
+            <ns0:groupId>org.springframework</ns0:groupId>
+            <ns0:artifactId>spring-beans</ns0:artifactId>
+            <ns0:version>4.3.2.RELEASE</ns0:version>
+
+            
+            <ns0:scope>provided</ns0:scope>
+        </ns0:dependency>
+    </ns0:dependencies>
+
+    <ns0:properties>
+        <ns0:jdk.version>1.8</ns0:jdk.version>
+    </ns0:properties>
+
+    <ns0:profiles>
+
+        
+        <ns0:profile>
+            <ns0:id>jenkins</ns0:id>
+            <ns0:activation>
+                <ns0:activeByDefault>true</ns0:activeByDefault>
+            </ns0:activation>
+            <ns0:build>
+                <ns0:resources>
+                    <ns0:resource>
+                        <ns0:directory>src/main/resources</ns0:directory>
+                        <ns0:includes>
+                            <ns0:include>*/**</ns0:include>
+                        </ns0:includes>
+                        <ns0:filtering>true</ns0:filtering>
+                    </ns0:resource>
+                    <ns0:resource>
+                        <ns0:directory>src/main/deployment-resources</ns0:directory>
+                        <ns0:includes>
+                            <ns0:include>*/**</ns0:include>
+                        </ns0:includes>
+                    </ns0:resource>
+                    <ns0:resource>
+                        <ns0:directory>src/main/deployment-resources-lowercase</ns0:directory>
+                        <ns0:includes>
+                            <ns0:include>*/**</ns0:include>
+                        </ns0:includes>
+                    </ns0:resource>
+                </ns0:resources>
+            </ns0:build>
+        </ns0:profile>
+        <ns0:profile>
+            <ns0:id>local</ns0:id>
+            <ns0:build>
+                <ns0:resources>
+                    <ns0:resource>
+                        <ns0:directory>src/main/resources</ns0:directory>
+                        <ns0:includes>
+                            <ns0:include>*/**</ns0:include>
+                        </ns0:includes>
+                        <ns0:filtering>false</ns0:filtering>
+                    </ns0:resource>
+                    <ns0:resource>
+                        <ns0:directory>src/main/local-resources</ns0:directory>
+                        <ns0:includes>
+                            <ns0:include>*/**</ns0:include>
+                        </ns0:includes>
+                        <ns0:filtering>false</ns0:filtering>
+                    </ns0:resource>
+                </ns0:resources>
+            </ns0:build>
+        </ns0:profile>
+    </ns0:profiles>
+
+    <ns0:distributionManagement>
+        <ns0:repository>
+            <ns0:id>turvo-central-repo</ns0:id>
+            <ns0:name>turvo-central-repo</ns0:name>
+            <ns0:url>http://artifact.turvo.net:8081/artifactory/libs-release-local</ns0:url>
+        </ns0:repository>
+        <ns0:snapshotRepository>
+            <ns0:id>turvo-central-repo-snapshot</ns0:id>
+            <ns0:name>turvo-central-repo-snapshot</ns0:name>
+            <ns0:url>http://artifact.turvo.net:8081/artifactory/libs-snapshot-local</ns0:url>
+        </ns0:snapshotRepository>
+    </ns0:distributionManagement>
+
+</ns0:project>

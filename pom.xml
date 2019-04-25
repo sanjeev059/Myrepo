@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.turvo</groupId>
+    <artifactId>turvo-configuration</artifactId>
+    <version>2.0.25</version>
+    <packaging>jar</packaging>
+    <name>Turvo Platform Configuration</name>
+    <description>Configuration resources for the Turvo platform</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>4.3.2.RELEASE</version>
+
+            <!-- why provided? So that we do not cause an explicit conflict between this version of
+                 spring and the sub-projects which have imported this module -->
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <jdk.version>1.8</jdk.version>
+    </properties>
+
+    <profiles>
+
+        <!-- profile for building artifacts -->
+        <profile>
+            <id>jenkins</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                        <includes>
+                            <include>*/**</include>
+                        </includes>
+                        <filtering>true</filtering>
+                    </resource>
+                    <resource>
+                        <directory>src/main/deployment-resources</directory>
+                        <includes>
+                            <include>*/**</include>
+                        </includes>
+                    </resource>
+                    <resource>
+                        <directory>src/main/deployment-resources-lowercase</directory>
+                        <includes>
+                            <include>*/**</include>
+                        </includes>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+        <profile>
+            <id>local</id>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                        <includes>
+                            <include>*/**</include>
+                        </includes>
+                        <filtering>false</filtering>
+                    </resource>
+                    <resource>
+                        <directory>src/main/local-resources</directory>
+                        <includes>
+                            <include>*/**</include>
+                        </includes>
+                        <filtering>false</filtering>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+    </profiles>
+
+    <distributionManagement>
+        <repository>
+            <id>turvo-central-repo</id>
+            <name>turvo-central-repo</name>
+            <url>http://artifact.turvo.net:8081/artifactory/libs-release-local</url>
+        </repository>
+        <snapshotRepository>
+            <id>turvo-central-repo-snapshot</id>
+            <name>turvo-central-repo-snapshot</name>
+            <url>http://artifact.turvo.net:8081/artifactory/libs-snapshot-local</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+</project>
