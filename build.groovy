@@ -17,7 +17,7 @@ pipeline {
         stage('DB Automation'){
           steps{
             script{
-            slackSend (channel: "#release-engg", color: '#FFFF00', message: "nightly build started\nbuild_url:(${env.BUILD_URL})")
+            //slackSend (channel: "#release-engg", color: '#FFFF00', message: "nightly build started\nbuild_url:(${env.BUILD_URL})")
             git branch: 'develop', url: 'ssh://git@lab.turvo.net:7999/dev/api.git'
             def commit = sh 'git rev-parse HEAD > commit'
             def commit1 = readFile('commit').trim()
@@ -60,10 +60,12 @@ pipeline {
             }
           }
         }
-/*
+      }
+
         stage('platform') {
             steps {
               script{
+              cleanWs()
               git branch: 'develop', url: 'ssh://git@lab.turvo.net:7999/dev/api.git'
               def commit = sh 'git rev-parse HEAD > commit'
               def commit1 = readFile('commit').trim()
@@ -72,19 +74,22 @@ pipeline {
               def output=readFile('result').trim()
               echo "$output";
                     build job: 'api-build', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "api"], [$class: 'StringParameterValue', name: 'GIT_TARGET', value: "$commit1"]]
-                    build job: 'api-promote', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "api"], [$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value:"${output}_nightly_1"]]
-                    build job: 'api-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "api"], [$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value:"$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value:"${output}_nightly_1"]]
-                    //build job: 'solo-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "api"], [$class: 'StringParameterValue', name: 'SCOPE', value: "private"],[$class: 'StringParameterValue', name: 'STACK', value: "hd-343"],[$class: 'StringParameterValue', name: 'VERSION', value:"${output}_nightly_1"]]
+                    build job: 'api-promote', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "api"], [$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value:"${output}_nightly_4"]]
+                    build job: 'api-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "api"], [$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value:"$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value:"${output}_nightly_4"]]
+                    //build job: 'solo-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "api"], [$class: 'StringParameterValue', name: 'SCOPE', value: "private"],[$class: 'StringParameterValue', name: 'STACK', value: "hd-343"],[$class: 'StringParameterValue', name: 'VERSION', value:"${output}_nightly_4"]]
+                    slackSend (channel: "#release-engg", color: '#FFFF00', message: "•api:build,promote,deploy complete'\n•${commit1}")
+
 
                     build job: 'event-build', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "event"], [$class: 'StringParameterValue', name: 'GIT_TARGET', value: "$commit1"]]
-                    build job: 'event-promote', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "event"], [$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value:"${output}_nightly_1"]]
-                    build job: 'event-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "event"], [$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value:"$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value:"${output}_nightly_1"]]
-                   // build job: 'solo-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "event"], [$class: 'StringParameterValue', name: 'SCOPE', value: "private"],[$class: 'StringParameterValue', name: 'STACK', value: "hd-343"],[$class: 'StringParameterValue', name: 'VERSION', value:"${output}_nightly_1"]]
+                    build job: 'event-promote', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "event"], [$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value:"${output}_nightly_4"]]
+                    build job: 'event-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "event"], [$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value:"$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value:"${output}_nightly_4"]]
+                   // build job: 'solo-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "event"], [$class: 'StringParameterValue', name: 'SCOPE', value: "private"],[$class: 'StringParameterValue', name: 'STACK', value: "hd-343"],[$class: 'StringParameterValue', name: 'VERSION', value:"${output}_nightly_4"]]
+                   slackSend (channel: "#release-engg", color: '#FFFF00', message: "•event:build,promote,deploy complete'\n•${commit1}")
 
                   build job: 'track-build', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "track"], [$class: 'StringParameterValue', name: 'GIT_TARGET', value: "$commit1"]]
-                  build job: 'track-promote', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "track"], [$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value:"${output}_nightly_1"]]
-                  build job: 'track-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "track"], [$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value:"$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value:"${output}_nightly_1"]]
-                  //build job: 'solo-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "track"], [$class: 'StringParameterValue', name: 'SCOPE', value: "private"],[$class: 'StringParameterValue', name: 'STACK', value: "hd-343"],[$class: 'StringParameterValue', name: 'VERSION', value:"${output}_nightly_1"]]
+                  build job: 'track-promote', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "track"], [$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value:"${output}_nightly_4"]]
+                  build job: 'track-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "track"], [$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value:"$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value:"${output}_nightly_4"]]
+                  //build job: 'solo-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "track"], [$class: 'StringParameterValue', name: 'SCOPE', value: "private"],[$class: 'StringParameterValue', name: 'STACK', value: "hd-343"],[$class: 'StringParameterValue', name: 'VERSION', value:"${output}_nightly_4"]]
 
 
 
@@ -94,6 +99,7 @@ pipeline {
         stage('Connect-core') {
             steps {
                     script{
+                    cleanWs()
 
                     git branch: 'develop', url: 'ssh://git@lab.turvo.net:7999/tc/core.git'
                     def commit = sh 'git rev-parse HEAD > commit'
@@ -105,9 +111,9 @@ pipeline {
                     echo "$output";
 
                     build job: 'connect-core-build', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "core"],[$class: 'StringParameterValue', name: 'GIT_TARGET', value: "$commit1"]]
-                    build job: 'connect-core-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "core"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_1"]]
-                    build job: 'connect-core-deploy', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "core"],[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value: "$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_1"]]
-                    //build job: 'solo-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "core"], [$class: 'StringParameterValue', name: 'SCOPE', value: "private"],[$class: 'StringParameterValue', name: 'STACK', value: "hd-343"],[$class: 'StringParameterValue', name: 'VERSION', value:"${output}_nightly_1"]]
+                    build job: 'connect-core-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "core"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
+                    build job: 'connect-core-deploy', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "core"],[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value: "$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
+                    //build job: 'solo-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "core"], [$class: 'StringParameterValue', name: 'SCOPE', value: "private"],[$class: 'StringParameterValue', name: 'STACK', value: "hd-343"],[$class: 'StringParameterValue', name: 'VERSION', value:"${output}_nightly_4"]]
 
 
                         }
@@ -119,6 +125,7 @@ pipeline {
         stage('Connect-http') {
             steps {
                     script{
+                    cleanWs()
                     git branch: 'develop', url: 'ssh://git@lab.turvo.net:7999/tc/http.git'
                     def commit = sh 'git rev-parse HEAD > commit'
                     def commit1 = readFile('commit').trim()
@@ -127,9 +134,9 @@ pipeline {
                     def output=readFile('result').trim()
                     echo "$output";
                     build job: 'connect-http-build', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "http"],[$class: 'StringParameterValue', name: 'GIT_TARGET', value: "$commit1"]]
-                    build job: 'connect-http-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "http"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly"]]
-                    build job: 'connect-http-deploy', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "http"],[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value: "$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly"]]
-                    //build job: 'solo-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "http"], [$class: 'StringParameterValue', name: 'SCOPE', value: "private"],[$class: 'StringParameterValue', name: 'STACK', value: "hd-343"],[$class: 'StringParameterValue', name: 'VERSION', value:"${output}_nightly_1"]]
+                    build job: 'connect-http-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "http"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
+                    build job: 'connect-http-deploy', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "http"],[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value: "$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
+                    //build job: 'solo-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "http"], [$class: 'StringParameterValue', name: 'SCOPE', value: "private"],[$class: 'StringParameterValue', name: 'STACK', value: "hd-343"],[$class: 'StringParameterValue', name: 'VERSION', value:"${output}_nightly_4"]]
 
 
                         }
@@ -141,6 +148,7 @@ pipeline {
           stage("Connect-edi") {
               steps {
                       script{
+                      cleanWs()
                       git branch: 'develop', url: 'ssh://git@lab.turvo.net:7999/tc/edi.git'
                       def commit = sh 'git rev-parse HEAD > commit'
                       def commit1 = readFile('commit').trim()
@@ -149,9 +157,9 @@ pipeline {
                       def output=readFile('result').trim()
                       echo "$output";
                       build job: 'connect-edi-build', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "edi"],[$class: 'StringParameterValue', name: 'GIT_TARGET', value: "$commit1"]]
-                      build job: 'connect-edi-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "edi"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_1"]]
-                      build job: 'connect-edi-deploy', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "edi"],[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value: "$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_1"]]
-                      //build job: 'solo-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "edi"], [$class: 'StringParameterValue', name: 'SCOPE', value: "private"],[$class: 'StringParameterValue', name: 'STACK', value: "hd-343"],[$class: 'StringParameterValue', name: 'VERSION', value:"${output}_nightly_1"]]
+                      build job: 'connect-edi-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "edi"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
+                      build job: 'connect-edi-deploy', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "edi"],[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value: "$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
+                      //build job: 'solo-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "edi"], [$class: 'StringParameterValue', name: 'SCOPE', value: "private"],[$class: 'StringParameterValue', name: 'STACK', value: "hd-343"],[$class: 'StringParameterValue', name: 'VERSION', value:"${output}_nightly_4"]]
 
 
                           }
@@ -163,6 +171,7 @@ pipeline {
           stage("Connect-bdi") {
               steps {
                       script{
+                      cleanWs()
                       git branch: 'develop', url: 'ssh://git@lab.turvo.net:7999/tc/bdi.git'
                       def commit = sh 'git rev-parse HEAD > commit'
                       def commit1 = readFile('commit').trim()
@@ -171,9 +180,9 @@ pipeline {
                       def output=readFile('result').trim()
                       echo "$output";
                       build job: 'connect-bdi-build', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "bdi"],[$class: 'StringParameterValue', name: 'GIT_TARGET', value: "$commit1"]]
-                      build job: 'connect-bdi-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "bdi"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_1"]]
-                      build job: 'connect-bdi-deploy', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "bdi"],[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value: "$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_1"]]
-                      //build job: 'solo-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "bdi"], [$class: 'StringParameterValue', name: 'SCOPE', value: "private"],[$class: 'StringParameterValue', name: 'STACK', value: "hd-343"],[$class: 'StringParameterValue', name: 'VERSION', value:"${output}_nightly_1"]]
+                      build job: 'connect-bdi-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "bdi"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
+                      build job: 'connect-bdi-deploy', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "bdi"],[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value: "$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
+                      //build job: 'solo-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "bdi"], [$class: 'StringParameterValue', name: 'SCOPE', value: "private"],[$class: 'StringParameterValue', name: 'STACK', value: "hd-343"],[$class: 'StringParameterValue', name: 'VERSION', value:"${output}_nightly_4"]]
 
 
                           }
@@ -183,6 +192,7 @@ pipeline {
         stage("orders") {
             steps {
                         script{
+                        cleanWs()
                         git branch: 'develop', url: 'ssh://git@lab.turvo.net:7999/dev/orders.git'
                         def commit = sh 'git rev-parse HEAD > commit'
                         def commit1 = readFile('commit').trim()
@@ -191,8 +201,8 @@ pipeline {
                         def output=readFile('result').trim()
                         echo "$output";
                         build job: 'platform-orders-build', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "orders"],[$class: 'StringParameterValue', name: 'GIT_TARGET', value: "$commit1"]]
-                        build job: 'platform-orders-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "orders"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_1"]]
-                        build job: 'platform-orders-deploy', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "orders"],[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value: "$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_1"]]
+                        build job: 'platform-orders-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "orders"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
+                        build job: 'platform-orders-deploy', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "orders"],[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value: "$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
 
                           }
                 }
@@ -201,6 +211,7 @@ pipeline {
                 stage("Contracts"){
                 steps{
                 script{
+                cleanWs()
                 git branch: 'develop', url: 'ssh://git@lab.turvo.net:7999/dev/contracts.git'
                 def commit = sh 'git rev-parse HEAD > commit'
                 def commit1 = readFile('commit').trim()
@@ -209,8 +220,8 @@ pipeline {
                 def output=readFile('result').trim()
                 echo "$output";
                 build job: 'platform-contracts-build', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "contracts"],[$class: 'StringParameterValue', name: 'GIT_TARGET', value: "$commit1"]]
-                build job: 'platform-contracts-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "contracts"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_1"]]
-                build job: 'platform-contracts-deploy', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "contracts"],[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value: "$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_1"]]
+                build job: 'platform-contracts-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "contracts"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
+                build job: 'platform-contracts-deploy', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "contracts"],[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value: "$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
                     }
                   }
 
@@ -218,6 +229,7 @@ pipeline {
                 stage("items"){
                 steps{
                 script{
+                cleanWs()
                 git branch: 'develop', url: 'ssh://git@lab.turvo.net:7999/dev/items.git'
                 def commit = sh 'git rev-parse HEAD > commit'
                 def commit1 = readFile('commit').trim()
@@ -226,8 +238,8 @@ pipeline {
                 def output=readFile('result').trim()
                 echo "$output";
                 build job: 'platform-items-build', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "items"],[$class: 'StringParameterValue', name: 'GIT_TARGET', value: "$commit1"]]
-                build job: 'platform-items-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "items"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_1"]]
-                build job: 'platform-items-deploy', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "items"],[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value: "$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_1"]]
+                build job: 'platform-items-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "items"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
+                build job: 'platform-items-deploy', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "items"],[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value: "$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
 
                   }
                 }
@@ -244,8 +256,8 @@ pipeline {
                 def output=readFile('result').trim()
                 echo "$output";
                 build job: 'platform-unity-build', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "unity"],[$class: 'StringParameterValue', name: 'GIT_TARGET', value: "$commit1"]]
-                build job: 'platform-unity-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "unity"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_1"]]
-                build job: 'platform-unity-deploy', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "unity"],[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value: "$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_1"]]
+                build job: 'platform-unity-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "unity"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
+                build job: 'platform-unity-deploy', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "unity"],[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value: "$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
 
 
                   }
@@ -263,8 +275,8 @@ pipeline {
             def output=readFile('result').trim()
             echo "$output";
             build job: 'presence-build', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "presence"], [$class: 'StringParameterValue', name: 'GIT_TARGET', value: "$commit1"]]
-            build job: 'presence-promote', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "presence"], [$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_1"]]
-            build job: 'presence-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "presence"], [$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value:"$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value:"${output}_nightly_1"]]
+            build job: 'presence-promote', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "presence"], [$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
+            build job: 'presence-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "presence"], [$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value:"$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value:"${output}_nightly_4"]]
 
             }
             }
@@ -280,8 +292,8 @@ pipeline {
             def output=readFile('result').trim()
             echo "$output";
             build job: 'notify-build', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "notify"], [$class: 'StringParameterValue', name: 'GIT_TARGET', value: "$commit1"]]
-            build job: 'notify-promote', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "notify"], [$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_1"]]
-            build job: 'notify-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "notify"], [$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value:"${stack}"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value:"${output}_nightly_1"]]
+            build job: 'notify-promote', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "notify"], [$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
+            build job: 'notify-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "notify"], [$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value:"${stack}"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value:"${output}_nightly_4"]]
 
 
             }
@@ -366,7 +378,5 @@ pipeline {
                  slackSend (channel: "#release-engg", color: '#000000', message: "ABORTED: Job '[${env.BUILD_NUMBER}]'\n(${env.BUILD_URL})")
 
         }
-    } */
-}
-}
+    }
 }
