@@ -114,6 +114,8 @@ pipeline {
                     build job: 'connect-core-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "core"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
                     build job: 'connect-core-deploy', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "core"],[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value: "$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
                     //build job: 'solo-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "core"], [$class: 'StringParameterValue', name: 'SCOPE', value: "private"],[$class: 'StringParameterValue', name: 'STACK', value: "hd-343"],[$class: 'StringParameterValue', name: 'VERSION', value:"${output}_nightly_4"]]
+                    slackSend (channel: "#release-engg", color: '#FFFF00', message: "•Core:build,promote,deploy complete'\n•${commit1}")
+
 
 
                         }
@@ -137,6 +139,8 @@ pipeline {
                     build job: 'connect-http-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "http"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
                     build job: 'connect-http-deploy', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "http"],[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value: "$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
                     //build job: 'solo-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "http"], [$class: 'StringParameterValue', name: 'SCOPE', value: "private"],[$class: 'StringParameterValue', name: 'STACK', value: "hd-343"],[$class: 'StringParameterValue', name: 'VERSION', value:"${output}_nightly_4"]]
+                    slackSend (channel: "#release-engg", color: '#FFFF00', message: "•http:build,promote,deploy complete'\n•${commit1}")
+
 
 
                         }
@@ -160,6 +164,7 @@ pipeline {
                       build job: 'connect-edi-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "edi"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
                       build job: 'connect-edi-deploy', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "edi"],[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value: "$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
                       //build job: 'solo-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "edi"], [$class: 'StringParameterValue', name: 'SCOPE', value: "private"],[$class: 'StringParameterValue', name: 'STACK', value: "hd-343"],[$class: 'StringParameterValue', name: 'VERSION', value:"${output}_nightly_4"]]
+                      slackSend (channel: "#release-engg", color: '#FFFF00', message: "•edi:build,promote,deploy complete'\n•${commit1}")
 
 
                           }
@@ -183,6 +188,7 @@ pipeline {
                       build job: 'connect-bdi-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "bdi"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
                       build job: 'connect-bdi-deploy', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "bdi"],[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value: "$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
                       //build job: 'solo-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "bdi"], [$class: 'StringParameterValue', name: 'SCOPE', value: "private"],[$class: 'StringParameterValue', name: 'STACK', value: "hd-343"],[$class: 'StringParameterValue', name: 'VERSION', value:"${output}_nightly_4"]]
+                      slackSend (channel: "#release-engg", color: '#FFFF00', message: "•bdi:build,promote,deploy complete'\n•${commit1}")
 
 
                           }
@@ -203,6 +209,7 @@ pipeline {
                         build job: 'platform-orders-build', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "orders"],[$class: 'StringParameterValue', name: 'GIT_TARGET', value: "$commit1"]]
                         build job: 'platform-orders-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "orders"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
                         build job: 'platform-orders-deploy', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "orders"],[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value: "$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
+                        slackSend (channel: "#release-engg", color: '#FFFF00', message: "•orders:build,promote,deploy complete'\n•${commit1}")
 
                           }
                 }
@@ -222,6 +229,8 @@ pipeline {
                 build job: 'platform-contracts-build', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "contracts"],[$class: 'StringParameterValue', name: 'GIT_TARGET', value: "$commit1"]]
                 build job: 'platform-contracts-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "contracts"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
                 build job: 'platform-contracts-deploy', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "contracts"],[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value: "$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
+                slackSend (channel: "#release-engg", color: '#FFFF00', message: "•contracts:build,promote,deploy complete'\n•${commit1}")
+
                     }
                   }
 
@@ -240,6 +249,7 @@ pipeline {
                 build job: 'platform-items-build', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "items"],[$class: 'StringParameterValue', name: 'GIT_TARGET', value: "$commit1"]]
                 build job: 'platform-items-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "items"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
                 build job: 'platform-items-deploy', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "items"],[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value: "$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
+                slackSend (channel: "#release-engg", color: '#FFFF00', message: "•items:build,promote,deploy complete'\n•${commit1}")
 
                   }
                 }
@@ -258,6 +268,7 @@ pipeline {
                 build job: 'platform-unity-build', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "unity"],[$class: 'StringParameterValue', name: 'GIT_TARGET', value: "$commit1"]]
                 build job: 'platform-unity-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "unity"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
                 build job: 'platform-unity-deploy', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "unity"],[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value: "$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
+                slackSend (channel: "#release-engg", color: '#FFFF00', message: "•unity:build,promote,deploy complete'\n•${commit1}")
 
 
                   }
@@ -277,6 +288,7 @@ pipeline {
             build job: 'presence-build', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "presence"], [$class: 'StringParameterValue', name: 'GIT_TARGET', value: "$commit1"]]
             build job: 'presence-promote', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "presence"], [$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
             build job: 'presence-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "presence"], [$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value:"$stack"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value:"${output}_nightly_4"]]
+            slackSend (channel: "#release-engg", color: '#FFFF00', message: "•presence:build,promote,deploy complete'\n•${commit1}")
 
             }
             }
@@ -294,6 +306,7 @@ pipeline {
             build job: 'notify-build', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "notify"], [$class: 'StringParameterValue', name: 'GIT_TARGET', value: "$commit1"]]
             build job: 'notify-promote', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "notify"], [$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "$commit1"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${output}_nightly_4"]]
             build job: 'notify-deploy', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "notify"], [$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],[$class: 'StringParameterValue', name: 'STACK', value:"${stack}"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value:"${output}_nightly_4"]]
+            slackSend (channel: "#release-engg", color: '#FFFF00', message: "•notify:build,promote,deploy complete'\n•${commit1}")
 
 
             }
@@ -315,6 +328,7 @@ pipeline {
                 build job: 'fusion-health-checker', parameters: [string(name: 'ENV', value: 'union'), string(name: 'STACK', value: 'delta')]
                 build job: 'fusion-health-checker', parameters: [string(name: 'ENV', value: 'union'), string(name: 'STACK', value: 'delta')]
                 build job: 'fusion-health-checker', parameters: [string(name: 'ENV', value: 'union'), string(name: 'STACK', value: 'delta')]
+                slackSend (channel: "#release-engg", color: '#FFFF00', message: "•health check triggered")
 
             }
             }
@@ -326,15 +340,15 @@ pipeline {
             script{
 
             build job: 'quality-aws-smoke-infra',  propagate: true, parameters:
-            [[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],
-            [$class: 'StringParameterValue', name: 'STACK', value: "$stack"],
-            [$class: 'StringParameterValue', name: 'SPEC', value:"$spec"],
-            [$class: 'StringParameterValue', name: 'RE_RUN_FAILED', value:"2"],
-            [$class: 'StringParameterValue', name: 'SELINIUM_ADDRESS', value:"http://ec2-54-202-137-102.us-west-2.compute.amazonaws.com:4444/wd/hub/"],
-            [$class: 'StringParameterValue', name: 'EXCLUDE', value:"$execlude"],
-            [$class: 'StringParameterValue', name: 'BUSINESS_RULES', value:"$bus_rule"],
-            [$class: 'StringParameterValue', name: 'MAX_INSTANCES', value:"10"],
-            [$class: 'StringParameterValue', name: '	GIT_TARGET', value:"$git_ref"],
+                    [[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "union"],
+                    [$class: 'StringParameterValue', name: 'STACK', value: "delta"],
+                    [$class: 'StringParameterValue', name: 'SPEC', value:"analytics-05,analytics-06,baseflow-54,dashboard-02,documents-01,documents-20,messenger-01,notifications-01,notifications-02,notifications-27,postUpdate-04,presence-01,shipmentSearch-01,sidebarMessenger-01,sharing-05,sharing-06,smoke-02,smoke-03,smoke-07,smoke-11,orders-01,contracts-01,timeline-01,timeline-06,tasks-01,exception-01"],
+                    [$class: 'StringParameterValue', name: 'RE_RUN_FAILED', value:"2"],
+                    [$class: 'StringParameterValue', name: 'SELINIUM_ADDRESS', value:"http://ec2-34-221-23-96.us-west-2.compute.amazonaws.com:4444/wd/hub/"],
+                    [$class: 'StringParameterValue', name: 'EXCLUDE', value:"payments,drivers,tags.systemTags,baseflow-55,baseflow-64,baseflow-53,baseflow-60,calendar-01,analytics-02,notifications-20"],
+                    [$class: 'StringParameterValue', name: 'BUSINESS_RULES', value:"phanindra.v@turvo.com/Temp@123"],
+                    [$class: 'StringParameterValue', name: 'MAX_INSTANCES', value:"10"],
+                    [$class: 'StringParameterValue', name: '	GIT_TARGET', value:"refs/heads/develop"],
             ]
             slackSend (channel: "#release-engg", color: '#00FF00', message: "Test Report: http://ci.turvo.net:8080/job/quality-aws-smoke-infra/lastBuild/allure/ ")
 
@@ -347,16 +361,15 @@ pipeline {
             steps {
             script{
 
-            build job: 'quality-aws-infra-regression',  propagate: true, parameters:
-            [[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "${env}"],
-            [$class: 'StringParameterValue', name: 'STACK', value: "$stack"],
-            [$class: 'StringParameterValue', name: 'SPEC', value:"$spec"],
-            [$class: 'StringParameterValue', name: 'RE_RUN_FAILED', value:"2"],
-            [$class: 'StringParameterValue', name: 'SELINIUM_ADDRESS', value:"http://ec2-54-202-137-102.us-west-2.compute.amazonaws.com:4444/wd/hub/"],
-            [$class: 'StringParameterValue', name: 'EXCLUDE', value:"$execlude"],
-            [$class: 'StringParameterValue', name: 'BUSINESS_RULES', value:"$bus_rule"],
-            [$class: 'StringParameterValue', name: 'MAX_INSTANCES', value:"10"],
-            [$class: 'StringParameterValue', name: '	GIT_TARGET', value:"$git_ref"],
+           build job: 'quality-aws-infra-regression',  propagate: true, parameters:
+                    [[$class: 'StringParameterValue', name: 'ENVIRONMENT', value: "union"],
+                    [$class: 'StringParameterValue', name: 'STACK', value: "delta"],
+                    [$class: 'StringParameterValue', name: 'RE_RUN_FAILED', value:"2"],
+                    [$class: 'StringParameterValue', name: 'SELINIUM_ADDRESS', value:"http://ec2-34-221-23-96.us-west-2.compute.amazonaws.com:4444/wd/hub/"],
+                    [$class: 'StringParameterValue', name: 'EXCLUDE', value:"payments,cascadeTime,businessRules-06,drivers-09,search-01,baseflow-55,baseflow-64,baseflow-53,baseflow-60,calendar-01,analytics-02,notifications-20,documents-37,analytics-16,tasks-13,timeline-20,timeline-21,shipmentSearch-05,crossTenantPresence-07,crossTenantPresence-08,presence-07,crossTenantPresence-03,notifications-17,notifications-18"],
+                    [$class: 'StringParameterValue', name: 'BUSINESS_RULES', value:"phanindra.v@turvo.com/Temp@123"],
+                    [$class: 'StringParameterValue', name: 'MAX_INSTANCES', value:"10"],
+                    [$class: 'StringParameterValue', name: '	GIT_TARGET', value:"refs/heads/develop"],
             ]
 
             slackSend (channel: "#release-engg", color: '#00FF00', message: "Test Report: http://ci.turvo.net:8080/job/quality-aws-infra-regression/lastBuild/allure/ ")
