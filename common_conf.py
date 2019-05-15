@@ -1,4 +1,5 @@
 import os
+import sys
 import xml.etree.ElementTree as et
 import argparse
 import subprocess
@@ -10,9 +11,18 @@ except ImportError:
     from ConfigParser import ConfigParser
 
 
+path  = os.environ['HOME']
+user_path = os.path.join(path,'workspace')
+clon_path = os.path.join(user_path,'test_paths')
 
 def branch_cut(var_arg1,var_arg2,rel_date):
-    base_path = '/Users/sanjeev.d/workspace/test_paths'
+    base_path = clon_path
+    if(os.path.exists(base_path)):
+        pass
+    else:
+        dir_create = os.makedirs(base_path,'w')
+
+
     clone_path = os.path.join(base_path,var_arg1)
     print var_arg1
     print clone_path
@@ -39,7 +49,7 @@ def branch_cut(var_arg1,var_arg2,rel_date):
 def read_urls(wed):
     release_date = wed
     config = ConfigParser()
-    config.read("urls.ini")
+    config.read("url.ini")
     read_recs = ['api','core','http','bdi','edi','presence','notify','orders','items','contracts','unity','config','common_conf']
     for rec in read_recs:
         url = config.get('url',rec)
