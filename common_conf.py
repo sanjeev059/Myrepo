@@ -49,7 +49,7 @@ def branch_cut(var_arg1,var_arg2,rel_date):
 def read_urls(wed):
     release_date = wed
     config = ConfigParser()
-    config.read("url.ini")
+    config.read("urls.ini")
     read_recs = ['api','core','http','bdi','edi','presence','notify','orders','items','contracts','unity','config','common_conf']
     for rec in read_recs:
         url = config.get('url',rec)
