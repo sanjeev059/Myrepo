@@ -1,6 +1,5 @@
 import os
 import sys
-import xml.etree.ElementTree as et
 import argparse
 import subprocess
 import datetime
@@ -50,7 +49,7 @@ def read_urls(wed):
     release_date = wed
     config = ConfigParser()
     config.read("urls.ini")
-    read_recs = ['api','core','http','bdi','edi','presence','notify','orders','items','contracts','unity','config','common_conf']
+    read_recs = ['api','core','http','bdi','edi','presence','notify','orders','items','contracts','unity','config','common-config','scheduler']
     for rec in read_recs:
         url = config.get('url',rec)
         #print rec+":"+url
@@ -70,8 +69,9 @@ def next_weekday(d, weekday):
 #    subprocess.check_output("sed 's/2.0.24-SNAPSHOT/2.0.25/g' api_pom > new.xml")
 #    subprocess.check_output(" mv new.xml api_pom")
 
+#def modify_pom_xml():
 
-
+#sed 's/2.0.25-SNAPSHOT/2.0.25/' pom.xml >pom1.xml; mv pom1.xml pom.xml;
 def main():
 
     #parser = argparse.ArgumentParser()
