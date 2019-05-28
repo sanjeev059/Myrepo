@@ -1,0 +1,272 @@
+pipeline {
+    agent any
+
+/*
+    environment{
+             stack = "delta"
+             env = "union"
+             spec = "analytics-05,analytics-06,baseflow-54,presence-02,dashboard-02,documents-01,documents-20,messenger-01,notifications-01,notifications-02,notifications-27,postUpdate-04,shipmentSearch-01,sidebarMessenger-01,sharing-05,sharing-06,smoke-02,smoke-03,smoke-07,smoke-11,orders-01,contracts-01,timeline-01,timeline-06,tasks-01"
+             execlude = "payments,drivers,tags.systemTags,baseflow-55,baseflow-64,baseflow-53,baseflow-60,calendar-01,analytics-02,notifications-20"
+             bus_rule = "phanindra.v@turvo.com/Temp@123"
+             git_ref = "refs/heads/${env.release_branch}"
+        }
+*/
+          stages {
+          stage('branch cut messenger') {
+              steps {
+
+          }
+        }
+        stage('platform') {
+            steps {
+              script{
+                if ("${env.PLATFORM}" == 'true'){
+                        git branch: "${env.release_branch}", url: 'ssh://git@lab.turvo.net:7999/dev/api.git'
+                        def commit = sh 'git rev-parse HEAD > commit'
+                        def commit1 = readFile('commit').trim()
+                        echo "${commit1}"
+                        //sh "date +%Y-%m-%d > result";
+                        //def output=readFile('result').trim()
+                        //echo "$output";
+                              build job: 'api-build', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "api"], [$class: 'StringParameterValue', name: 'GIT_TARGET', value: "${commit1}"]]
+                              build job: 'api-promote', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "api"], [$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "${commit1}"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value:"${env.artifact}"]]
+                              build job: 'event-build', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "event"], [$class: 'StringParameterValue', name: 'GIT_TARGET', value: "${commit1}"]]
+                              build job: 'event-promote', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "event"], [$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "${commit1}"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value:"${env.artifact}"]]
+                            build job: 'track-build', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "track"], [$class: 'StringParameterValue', name: 'GIT_TARGET', value: "${commit1}"]]
+                            build job: 'track-promote', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "track"], [$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "${commit1}"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value:"${env.artifact}"]]
+                }else{
+                    echo"Platform artifact will not be promoted"
+                }
+
+            }
+        }
+      }
+
+      stage('Connect-core') {
+          steps {
+                  script{
+                      cleanWs()
+                      if ("${env.CON_CORE}" == 'true'){
+                  git branch: "${env.release_branch}", url: 'ssh://git@lab.turvo.net:7999/tc/core.git'
+                  def commit = sh 'git rev-parse HEAD > commit'
+                  def commit1 = readFile('commit').trim()
+                  echo "commit1"
+
+                  build job: 'connect-core-build', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "core"],[$class: 'StringParameterValue', name: 'GIT_TARGET', value: "${commit1}"]]
+                  build job: 'connect-core-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "core"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "${commit1}"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${env.artifact}"]]
+
+                    }else{
+                        echo"core will not be promoted"
+                    }
+                      }
+              }
+      }
+
+      //connect http
+
+      stage('Connect-http') {
+          steps {
+                  script{
+                      cleanWs()
+                      if ("${env.CON_HTTP}" == 'true'){
+                        git branch: "${env.release_branch}", url: 'ssh://git@lab.turvo.net:7999/tc/http.git'
+                        def commit = sh 'git rev-parse HEAD > commit'
+                        def commit1 = readFile('commit').trim()
+                        echo "${commit1}"
+                        build job: 'connect-http-build', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "http"],[$class: 'StringParameterValue', name: 'GIT_TARGET', value: "${commit1}"]]
+                        build job: 'connect-http-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "http"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "${commit1}"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${env.artifact}"]]
+                          }else{
+                              echo"http will not be promoted"
+                          }
+                      }
+              }
+      }
+
+//connet edi
+
+        stage("Connect-edi") {
+            steps {
+                    script{
+                        cleanWs()
+                      if ("${env.CON_EDI}" == 'true'){
+                            git branch: "${env.release_branch}", url: 'ssh://git@lab.turvo.net:7999/tc/edi.git'
+                            def commit = sh 'git rev-parse HEAD > commit'
+                            def commit1 = readFile('commit').trim()
+                            echo "${commit1}"
+                            build job: 'connect-edi-build', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "edi"],[$class: 'StringParameterValue', name: 'GIT_TARGET', value: "${commit1}"]]
+                            build job: 'connect-edi-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "edi"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "${commit1}"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${env.artifact}"]]
+                            }else{
+                                echo "edi will not be promoted"
+                            }
+                        }
+                }
+        }
+
+        //connect bdi
+
+        stage("Connect-bdi") {
+            steps {
+                    script{
+                        cleanWs()
+                      if ("${env.CON_BDI}" == 'true'){
+                          git branch: "${env.release_branch}", url: 'ssh://git@lab.turvo.net:7999/tc/bdi.git'
+                          def commit = sh 'git rev-parse HEAD > commit'
+                          def commit1 = readFile('commit').trim()
+                          echo "${commit1}"
+                          build job: 'connect-bdi-build', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "bdi"],[$class: 'StringParameterValue', name: 'GIT_TARGET', value: "${commit1}"]]
+                          build job: 'connect-bdi-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "connect"], [$class: 'StringParameterValue', name: 'SERVICE', value: "bdi"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "${commit1}"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${env.artifact}"]]
+                            }else{
+                              echo"bdi will not promote"
+                            }
+                        }
+                }
+        }
+        stage("Presence") {
+            steps {
+
+            script{
+                cleanWs()
+            if ("${env.PRESENCE}" == 'true'){
+            git branch: "${env.release_branch}", url: 'ssh://git@lab.turvo.net:7999/dev/presence.git'
+            def commit = sh 'git rev-parse HEAD > commit'
+            def commit1 = readFile('commit').trim()
+            echo "${commit1}"
+            build job: 'presence-build', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "presence"], [$class: 'StringParameterValue', name: 'GIT_TARGET', value: "${commit1}"]]
+            build job: 'presence-promote', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "presence"], [$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "${commit1}"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${env.artifact}"]]
+              }else{
+                  echo "presence will not be promoted"
+              }
+            }
+            }
+        }
+      stage("orders") {
+          steps {
+                      script{
+                          cleanWs()
+                        if ("${env.ORDERS}" == 'true'){
+                      git branch: "${env.release_branch}", url: 'ssh://git@lab.turvo.net:7999/dev/orders.git'
+                      def commit = sh 'git rev-parse HEAD > commit'
+                      def commit1 = readFile('commit').trim()
+                      echo "${commit1}"
+                      build job: 'platform-orders-build', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "orders"],[$class: 'StringParameterValue', name: 'GIT_TARGET', value: "${commit1}"]]
+                      build job: 'platform-orders-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "orders"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "${commit1}"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${env.artifact}"]]
+                          }else{
+                            echo "orders will not promote"
+                          }
+                        }
+              }
+          }
+
+              stage("Contracts"){
+              steps{
+              script{
+                  cleanWs()
+              if ("${env.CONTRACTS}" == 'true'){
+              git branch: "${env.release_branch}", url: 'ssh://git@lab.turvo.net:7999/dev/contracts.git'
+              def commit = sh 'git rev-parse HEAD > commit'
+              def commit1 = readFile('commit').trim()
+              echo "${commit1}"
+              build job: 'platform-contracts-build', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "contracts"],[$class: 'StringParameterValue', name: 'GIT_TARGET', value: "${commit1}"]]
+              build job: 'platform-contracts-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "contracts"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "${commit1}"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${env.artifact}"]]
+                    }else{
+                        echo"contract will not be promted"
+                    }
+                  }
+                }
+
+              }
+              stage("items"){
+              steps{
+              script{
+                  cleanWs()
+              if ("${env.ITEMS}" == 'true'){
+              git branch: "${env.release_branch}", url: 'ssh://git@lab.turvo.net:7999/dev/items.git'
+              def commit = sh 'git rev-parse HEAD > commit'
+              def commit1 = readFile('commit').trim()
+              echo "${commit1}"
+              build job: 'platform-items-build', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "items"],[$class: 'StringParameterValue', name: 'GIT_TARGET', value: "${commit1}"]]
+              build job: 'platform-items-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "items"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "${commit1}"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${env.artifact}"]]
+                  }else{
+                    echo "items will not be promoted"
+                  }
+                }
+              }
+            }
+              stage("unity"){
+              steps{
+              script{
+              if ("${env.UNITY}" == 'true'){
+                  cleanWs()
+              git branch: "${env.release_branch}", url: 'ssh://git@bb.turvo.net:7999/dev/unity.git'
+              def commit = sh 'git rev-parse HEAD > commit'
+              def commit1 = readFile('commit').trim()
+              echo "${commit1}"
+              build job: 'platform-unity-build', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "unity"],[$class: 'StringParameterValue', name: 'GIT_TARGET', value: "${commit1}"]]
+              build job: 'platform-unity-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: 'SERVICE', value: "unity"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "${commit1}"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${env.artifact}"]]
+                  }else{
+                    echo"unity will not be promoted"
+                  }
+
+                }
+              }
+              }
+
+      stage("Notify") {
+          steps {
+          script{
+              cleanWs()
+            if ("${env.NOTIFY}" == 'true'){
+          git branch: "${env.release_branch}", url: 'ssh://git@lab.turvo.net:7999/dev/notify.git'
+          def commit = sh 'git rev-parse HEAD > commit'
+          def commit1 = readFile('commit').trim()
+          echo "${commit1}"
+          build job: 'notify-build', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "notify"], [$class: 'StringParameterValue', name: 'GIT_TARGET', value: "${commit1}"]]
+          build job: 'notify-promote', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "notify"], [$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "${commit1}"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${env.artifact}"]]
+
+              }else{
+                  echo "notify will not be promoted"
+              }
+          }
+          }
+      }
+      stage("Platform-config") {
+          steps {
+          script{
+              cleanWs()
+            if ("${env.NOTIFY}" == 'true'){
+          git branch: "${env.release_branch}", url: 'ssh://git@lab.turvo.net:7999/dev/config.git'
+          def commit = sh 'git rev-parse HEAD > commit'
+          def commit1 = readFile('commit').trim()
+          echo "${commit1}"
+          build job: 'platform-config-build', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"],[$class: 'StringParameterValue', name: 'SERVICE', value: "config"], [$class: 'StringParameterValue', name: 'GIT_TARGET', value: "${commit1}"]]
+          build job: 'platform-config-promote', parameters: [[$class: 'StringParameterValue', name: 'APPLICATION', value: "platform"], [$class: 'StringParameterValue', name: '	SERVICE', value: "config"],[$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "${commit1}"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${env.artifact}"]]
+
+              }else{
+                  echo "platform config  will not be promoted"
+              }
+          }
+          }
+      }
+      stage("scheduler") {
+          steps {
+          script{
+              cleanWs()
+            if ("${env.NOTIFY}" == 'true'){
+          git branch: "${env.release_branch}", url: 'ssh://git@lab.turvo.net:7999/dev/scheduler.git'
+          def commit = sh 'git rev-parse HEAD > commit'
+          def commit1 = readFile('commit').trim()
+          echo "${commit1}"
+          build job: 'scheduler-build', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "scheduler"], [$class: 'StringParameterValue', name: 'GIT_TARGET', value: "${commit1}"]]
+          build job: 'scheduler-promote', parameters: [[$class: 'StringParameterValue', name: 'ROLE', value: "scheduler"], [$class: 'StringParameterValue', name: 'BUILD_VERSION', value: "${commit1}"],[$class: 'StringParameterValue', name: 'RELEASE_VERSION', value: "${env.artifact}"]]
+
+              }else{
+                  echo "scheduler will not be promoted"
+              }
+          }
+          }
+      }
+
+
+
+    }
+}
