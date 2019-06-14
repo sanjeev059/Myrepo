@@ -1,0 +1,40 @@
+{
+    "title": "change for common cofig",
+    "description": "sample change.",
+    "state": "OPEN",
+    "open": true,
+    "closed": false,
+    "fromRef": {
+        "id": "refs/heads/test1",
+        "repository": {
+            "slug": "common-config",
+            "name": null,
+            "project": {
+                "key": "DEV"
+            }
+        }
+    },
+    "toRef": {
+        "id": "refs/heads/test2",
+        "repository": {
+            "slug": "common-config",
+            "name": null,
+            "project": {
+                "key": "DEV"
+            }
+        }
+    },
+    "locked": false,
+    "reviewers": [
+        {
+            "user": {
+                "name": "kasipathi.n"
+            }
+        }
+    ],
+    "links": {
+        "self": [
+            null
+        ]
+    }
+}

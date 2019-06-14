@@ -25,7 +25,7 @@ def branch_cut(var_arg1,var_arg2,rel_date):
     clone_path = os.path.join(base_path,var_arg1)
     print var_arg1
     print clone_path
-    branch = 'release/'+rel_date
+    branch = rel_date
     print branch
     #print branch
 
@@ -53,7 +53,7 @@ def read_urls(wed):
     for rec in read_recs:
         url = config.get('url',rec)
         #print rec+":"+url
-        branch_cut(rec,url,release_date)
+        branch_cut(rec,url,"feature/OPS-1151")
 
 
 def next_weekday(d, weekday):
