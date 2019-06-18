@@ -7,13 +7,20 @@ import argparse
 import subprocess
 import datetime
 import re
+import urllib2
 
 try:
     from configparser import ConfigParser
 except ImportError:
     from ConfigParser import ConfigParser
 
+
+config = ConfigParser()
+headers = {'content-type': 'application/json'}
+
+auth_req = ('sanjeev.d','kindJ3lly81')
 path  = os.environ['HOME']
+
 user_path = os.path.join(path,'workspace')
 clon_path = os.path.join(user_path,'test_paths')
 
@@ -93,9 +100,7 @@ def commit_version():
         subprocess.check_output('git commit -m merge_from_release_to_develop',shell=True)
         subprocess.check_output("git push origin",shell=True)
         os.chdir(clon_path)
-print "completd with pom xml merge"
-'''
-
+    print "completd with pom xml merge"
     api_path = os.path.join(clon_path,"api/saahas-maven")
     os.chdir(api_path)
     print api_path
@@ -105,16 +110,244 @@ print "completd with pom xml merge"
     #subprocess.check_output('mv api/saahas-maven/pom1.xml api/saahas-maven/pom.xml',shell=True)
 
 #mv api/saahas-maven/pom1.xml api/saahas-maven/pom.xml
-'''
+
+def raise_pull_req_common():
+
+    headers = {'content-type': 'application/json'}
+    config = ConfigParser()
+    config.read("rest_urls.ini")
+    rest_url = config.get('common','common-config')
+    print rest_url
+    with open('pull_request.json','rw') as json_file:
+        data1 = json.load(json_file)
+        #r = requests.post(url=rest_url, data=json.dumps(data1), headers=headers,auth=pyload)
+        response = requests.request("POST", rest_url, data=json.dumps(data1), headers=headers,auth=auth_req)
+        print response.text
+
+def raise_pull_req_platform():
+
+    config.read("rest_urls.ini")
+    rest_api = config.get('platform','api')
+    print rest_api
+
+    with open('pull_request_platform.json','r') as filedata:
+        data1 = json.load(filedata)
+        response = requests.request("POST", rest_api, data=json.dumps(data1), headers=headers,auth=auth_req)
+        print response.text
+
+
+    old_slug = "api"
+    project_slug = "notify"
+    json_modifier(old_slug,project_slug)
+
+    config.read("rest_urls.ini")
+    rest_notify = config.get('platform','notify')
+
+    with open('pull_request_platform.json','r') as filedata:
+        data1 = json.load(filedata)
+        response = requests.request("POST", rest_notify, data=json.dumps(data1), headers=headers,auth=auth_req)
+        print response.text
+
+    old_slug = "notify"
+    project_slug = "scheduler"
+    json_modifier(old_slug,project_slug)
+
+    config.read("rest_urls.ini")
+    rest_notify = config.get('platform','scheduler')
+
+    with open('pull_request_platform.json','r') as filedata:
+        data1 = json.load(filedata)
+        response = requests.request("POST", rest_notify, data=json.dumps(data1), headers=headers,auth=auth_req)
+        print response.text
+
+    old_slug = "scheduler"
+    project_slug = "presence"
+    json_modifier(old_slug,project_slug)
+
+    config.read("rest_urls.ini")
+    rest_presence = config.get('platform','presence')
+
+    with open('pull_request_platform.json','r') as filedata:
+        data1 = json.load(filedata)
+        response = requests.request("POST", rest_presence, data=json.dumps(data1), headers=headers,auth=auth_req)
+        print response.text
+
+    old_slug = "presence"
+    project_slug = "api"
+    json_modifier(old_slug,project_slug)
+
+
+def raise_pull_req_connect():
+
+    config.read("rest_urls.ini")
+    rest_core = config.get('connect','core')
+
+    with open('pull_request_platform.json','r') as filedata:
+        data1 = json.load(filedata)
+        response = requests.request("POST", rest_core, data=json.dumps(data1), headers=headers,auth=auth_req)
+        print response.text
+
+    old_slug = "core"
+    project_slug = "http"
+    json_modifier_connect(old_slug,project_slug)
+
+    config.read("rest_urls.ini")
+    rest_http = config.get('connect','http')
+
+    with open('pull_request_platform.json','r') as filedata:
+        data1 = json.load(filedata)
+        response = requests.request("POST", rest_http, data=json.dumps(data1), headers=headers,auth=auth_req)
+        print response.text
+
+    old_slug = "http"
+    project_slug = "edi"
+    json_modifier_connect(old_slug,project_slug)
+
+    config.read("rest_urls.ini")
+    rest_edi = config.get('connect','edi')
+
+    with open('pull_request_platform.json','r') as filedata:
+        data1 = json.load(filedata)
+        response = requests.request("POST", rest_edi, data=json.dumps(data1), headers=headers,auth=auth_req)
+        print response.text
+
+    old_slug = "edi"
+    project_slug = "bdi"
+    json_modifier_connect(old_slug,project_slug)
+
+    config.read("rest_urls.ini")
+    rest_bdi = config.get('connect','bdi')
+
+    with open('pull_request_platform.json','r') as filedata:
+        data1 = json.load(filedata)
+        response = requests.request("POST", rest_bdi, data=json.dumps(data1), headers=headers,auth=auth_req)
+        print response.text
+
+    old_slug = "bdi"
+    project_slug = "core"
+    json_modifier_connect(old_slug,project_slug)
+
+
+def json_modifier(old_slug,project_slug):
+        f = open('pull_request_platform.json','r')
+        filedata = f.read()
+        f.close()
+        newdata = filedata.replace(old_slug,project_slug)
+        f = open('pull_request_platfor.json','w')
+        f.write(newdata)
+        f.close()
+
+def json_modifier_connect(old_slug,project_slug):
+
+    f = open('pull_request_connect.json','r')
+    filedata = f.read()
+    f.close()
+    newdata = filedata.replace(old_slug,project_slug)
+    f = open('pull_request_connect.json','w')
+    f.write(newdata)
+    f.close()
+
+def json_modifier_v2():
+
+    f = open('pull_request_V2.json','r')
+    filedata = f.read()
+    f.close()
+    newdata = filedata.replace(old_slug,project_slug)
+    f = open('pull_request_V2.json','w')
+    f.write(newdata)
+    f.close()
+
+
+def raise_pull_req_v2():
+
+    config.read("rest_urls.ini")
+    rest_config = config.get('v2','config')
+
+    with open('pull_request_V2.json','r') as filedata:
+        data1 = json.load(filedata)
+        response = requests.request("POST", rest_config, data=json.dumps(data1), headers=headers,auth=auth_req)
+        print response.text
+
+    old_slug = "config"
+    project_slug = "orders"
+    json_modifier_connect(old_slug,project_slug)
+
+    config.read("rest_urls.ini")
+    rest_orders = config.get('v2','orders')
+
+    with open('pull_request_V2.json','r') as filedata:
+        data1 = json.load(filedata)
+        response = requests.request("POST", rest_orders, data=json.dumps(data1), headers=headers,auth=auth_req)
+        print response.text
+
+    old_slug = "orders"
+    project_slug = "contracts"
+    json_modifier_connect(old_slug,project_slug)
+
+    config.read("rest_urls.ini")
+    rest_contracts = config.get('v2','contracts')
+
+    with open('pull_request_V2.json','r') as filedata:
+        data1 = json.load(filedata)
+        response = requests.request("POST", rest_contracts, data=json.dumps(data1), headers=headers,auth=auth_req)
+        print response.text
+
+    old_slug = "contracts"
+    project_slug = "unity"
+    json_modifier_connect(old_slug,project_slug)
+
+    config.read("rest_urls.ini")
+    rest_unity = config.get('v2','unity')
+
+    with open('pull_request_V2.json','r') as filedata:
+        data1 = json.load(filedata)
+        response = requests.request("POST", rest_unity, data=json.dumps(data1), headers=headers,auth=auth_req)
+        print response.text
+
+    old_slug = "unity"
+    project_slug = "items"
+    json_modifier_connect(old_slug,project_slug)
+
+    config.read("rest_urls.ini")
+    rest_items = config.get('v2','items')
+
+    with open('pull_request_V2.json','r') as filedata:
+        data1 = json.load(filedata)
+        response = requests.request("POST", rest_items, data=json.dumps(data1), headers=headers,auth=auth_req)
+        print response.text
+
+    old_slug = "items"
+    project_slug = "config"
+    json_modifier_connect(old_slug,project_slug)
+
+
+
+#def raise_pull_req_connect():
+
+
+#def raise_pull_req_V2():
 
 #def raise_pull_request():
+
 def main():
+
+    parser = argparse.ArgumentParser()
+    rel = parser.add_argument('rel',help='enter valid release branch')
+    tc = parser.add_argument('tc',help='turvo config should be version')
+    args = parser.parse_args()
+    print args.rel
+    print args.tc
+    checkout_release(args.rel)
+    #raise_pull_req_platform()
+'''
     #ver = store_turvo_config_version()
-    checkout_release("pull_test")
+
     print "completed in checking out release branch"
 #    get_path = set_common_paths()
     for ref_path in set_path:
         v1_merge_changes("2.0.38",ref_path)
+'''
+
 #commit_version()
 
 if __name__ == "__main__":

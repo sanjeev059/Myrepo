@@ -1,13 +1,13 @@
 {
-    "title": "change for ops-1151",
+    "title": "sample change",
     "description": "sample change.",
     "state": "OPEN",
     "open": true,
     "closed": false,
     "fromRef": {
-        "id": "refs/heads/test1",
+        "id": "refs/heads/test_pull_2",
         "repository": {
-            "slug": "common-config",
+            "slug": "api",
             "name": null,
             "project": {
                 "key": "DEV"
@@ -15,9 +15,9 @@
         }
     },
     "toRef": {
-        "id": "refs/heads/test2",
+        "id": "refs/heads/test_pull_1",
         "repository": {
-            "slug": "common-config",
+            "slug": "api",
             "name": null,
             "project": {
                 "key": "DEV"

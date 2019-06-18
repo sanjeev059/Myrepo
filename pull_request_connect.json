@@ -7,20 +7,20 @@
     "fromRef": {
         "id": "refs/heads/test1",
         "repository": {
-            "slug": "common-config",
+            "slug": "core",
             "name": null,
             "project": {
-                "key": "DEV"
+                "key": "TC"
             }
         }
     },
     "toRef": {
         "id": "refs/heads/test2",
         "repository": {
-            "slug": "common-config",
+            "slug": "core",
             "name": null,
             "project": {
-                "key": "DEV"
+                "key": "TC"
             }
         }
     },
