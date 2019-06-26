@@ -8,6 +8,7 @@ import subprocess
 import datetime
 import re
 import urllib2
+import time
 
 try:
     from configparser import ConfigParser
@@ -15,7 +16,7 @@ except ImportError:
     from ConfigParser import ConfigParser
 
 
-config = ConfigParser()
+
 headers = {'content-type': 'application/json'}
 
 auth_req = ('sanjeev.d','kindJ3lly81')
@@ -33,6 +34,7 @@ notify_commit = os.path.join(clon_path,'notify')
 scheduler_commit = os.path.join(clon_path,'scheduler')
 
 commit_arr = [api_commit,core_commit,http_commit,edi_commit,bdi_commit,notify_commit,scheduler_commit]
+#commit_arr = [api_commit,core_commit]
 
 
 
@@ -55,7 +57,7 @@ def store_turvo_config_version():
 
 #def copy_version():
 
-def v1_merge_changes(vers,path):
+def v1_merge_changes(vers,path,):
     var = vers
     var1 = var+"-SNAPSHOT"
     f = open(path,'r')
@@ -65,20 +67,28 @@ def v1_merge_changes(vers,path):
     f = open(path,'w')
     f.write(newdata)
     f.close()
-    commit_version()
+    commit_version(path)
 
 
-def commit_version():
-    commit_arr = [api_commit,core_commit,http_commit,edi_commit,bdi_commit,notify_commit,scheduler_commit]
+def commit_version(path):
+    #commit_arr = [api_commit,core_commit,http_commit,edi_commit,bdi_commit,notify_commit,scheduler_commit]
+    #commit_arr = [bdi_commit]
 
-    for commit in commit_arr:
-        #str(commit)
-        os.chdir(commit)
-        subprocess.check_output("git add  .",shell=True)
-        #subprocess.check_output("git commit -m merge_from_release_to_develop",shell=True)
-        os.system("git commit -m merger_from_release")
-        subprocess.check_output("git push origin",shell=True)
-        os.chdir(clon_path)
+    #str(commit)
+    r_path = os.path.dirname(path)
+    print r_path
+    os.chdir(r_path)
+    os.system("git add  .")
+    print "add"
+    time.sleep(5)
+    #subprocess.check_output("git commit -m merge_from_release_to_develop",shell=True)
+    os.system("git commit -m merger_from_release")
+    print "commit"
+    time.sleep(5)
+    os.system("git push origin")
+    print "push"
+    time.sleep(5)
+    os.chdir(clon_path)
     #print "completd with pom xml merge"
     #api_path = os.path.join(clon_path,"api/saahas-maven")
     #os.chdir(api_path)
@@ -94,7 +104,7 @@ def raise_pull_req_common():
 
     headers = {'content-type': 'application/json'}
     config = ConfigParser()
-    config.read("rest_urls.ini")
+    config.read("/Users/sanjeev.d/workspace/Myrepo/rest_urls.ini")
     rest_url = config.get('common','common-config')
     print rest_url
     with open('pull_request.json','rw') as json_file:
@@ -104,12 +114,15 @@ def raise_pull_req_common():
         print response.text
 
 def raise_pull_req_platform():
-
-    config.read("rest_urls.ini")
+    config = ConfigParser()
+    file_ini = os.path.join(user_path,'Myrepo/rest_urls.ini')
+    print file_ini
+    config.read(file_ini)
     rest_api = config.get('platform','api')
     print rest_api
 
-    with open('pull_request_platform.json','r') as filedata:
+    platform_json = os.path.join(user_path,'Myrepo/pull_request_platform.json')
+    with open(platform_json,'r') as filedata:
         data1 = json.load(filedata)
         response = requests.request("POST", rest_api, data=json.dumps(data1), headers=headers,auth=auth_req)
         print response.text
@@ -118,11 +131,11 @@ def raise_pull_req_platform():
     old_slug = "api"
     project_slug = "notify"
     json_modifier(old_slug,project_slug)
-
-    config.read("rest_urls.ini")
+    file_ini = os.path.join(user_path,'Myrepo/rest_urls.ini')
+    config.read(file_ini)
     rest_notify = config.get('platform','notify')
-
-    with open('pull_request_platform.json','r') as filedata:
+    platform_json = os.path.join(user_path,'Myrepo/pull_request_platform.json')
+    with open(platform_json,'r') as filedata:
         data1 = json.load(filedata)
         response = requests.request("POST", rest_notify, data=json.dumps(data1), headers=headers,auth=auth_req)
         print response.text
@@ -130,11 +143,11 @@ def raise_pull_req_platform():
     old_slug = "notify"
     project_slug = "scheduler"
     json_modifier(old_slug,project_slug)
-
-    config.read("rest_urls.ini")
+    file_ini = os.path.join(user_path,'Myrepo/rest_urls.ini')
+    config.read(file_ini)
     rest_notify = config.get('platform','scheduler')
-
-    with open('pull_request_platform.json','r') as filedata:
+    platform_json = os.path.join(user_path,'Myrepo/pull_request_platform.json')
+    with open(platform_json,'r') as filedata:
         data1 = json.load(filedata)
         response = requests.request("POST", rest_notify, data=json.dumps(data1), headers=headers,auth=auth_req)
         print response.text
@@ -142,11 +155,11 @@ def raise_pull_req_platform():
     old_slug = "scheduler"
     project_slug = "presence"
     json_modifier(old_slug,project_slug)
-
-    config.read("rest_urls.ini")
+    file_ini = os.path.join(user_path,'Myrepo/rest_urls.ini')
+    config.read(file_ini)
     rest_presence = config.get('platform','presence')
-
-    with open('pull_request_platform.json','r') as filedata:
+    platform_json = os.path.join(user_path,'Myrepo/pull_request_platform.json')
+    with open(platform_json,'r') as filedata:
         data1 = json.load(filedata)
         response = requests.request("POST", rest_presence, data=json.dumps(data1), headers=headers,auth=auth_req)
         print response.text
@@ -157,11 +170,13 @@ def raise_pull_req_platform():
 
 
 def raise_pull_req_connect():
-
-    config.read("rest_urls.ini")
+    config = ConfigParser()
+    file_ini = os.path.join(user_path,'Myrepo/rest_urls.ini')
+    config.read(file_ini)
     rest_core = config.get('connect','core')
 
-    with open('pull_request_platform.json','r') as filedata:
+    connect_json = os.path.join(user_path,'Myrepo/pull_request_connect.json')
+    with open(connect_json,'r') as filedata:
         data1 = json.load(filedata)
         response = requests.request("POST", rest_core, data=json.dumps(data1), headers=headers,auth=auth_req)
         print response.text
@@ -169,11 +184,12 @@ def raise_pull_req_connect():
     old_slug = "core"
     project_slug = "http"
     json_modifier_connect(old_slug,project_slug)
-
-    config.read("rest_urls.ini")
+    file_ini = os.path.join(user_path,'Myrepo/rest_urls.ini')
+    config.read(file_ini)
     rest_http = config.get('connect','http')
 
-    with open('pull_request_platform.json','r') as filedata:
+    connect_json = os.path.join(user_path,'Myrepo/pull_request_connect.json')
+    with open(connect_json,'r') as filedata:
         data1 = json.load(filedata)
         response = requests.request("POST", rest_http, data=json.dumps(data1), headers=headers,auth=auth_req)
         print response.text
@@ -181,11 +197,11 @@ def raise_pull_req_connect():
     old_slug = "http"
     project_slug = "edi"
     json_modifier_connect(old_slug,project_slug)
-
-    config.read("rest_urls.ini")
+    file_ini = os.path.join(user_path,'Myrepo/rest_urls.ini')
+    config.read(file_ini)
     rest_edi = config.get('connect','edi')
-
-    with open('pull_request_platform.json','r') as filedata:
+    connect_json = os.path.join(user_path,'Myrepo/pull_request_connect.json')
+    with open(connect_json,'r') as filedata:
         data1 = json.load(filedata)
         response = requests.request("POST", rest_edi, data=json.dumps(data1), headers=headers,auth=auth_req)
         print response.text
@@ -193,11 +209,11 @@ def raise_pull_req_connect():
     old_slug = "edi"
     project_slug = "bdi"
     json_modifier_connect(old_slug,project_slug)
-
-    config.read("rest_urls.ini")
+    file_ini = os.path.join(user_path,'Myrepo/rest_urls.ini')
+    config.read(file_ini)
     rest_bdi = config.get('connect','bdi')
-
-    with open('pull_request_platform.json','r') as filedata:
+    connect_json = os.path.join(user_path,'Myrepo/pull_request_connect.json')
+    with open(connect_json,'r') as filedata:
         data1 = json.load(filedata)
         response = requests.request("POST", rest_bdi, data=json.dumps(data1), headers=headers,auth=auth_req)
         print response.text
@@ -208,27 +224,28 @@ def raise_pull_req_connect():
 
 
 def json_modifier(old_slug,project_slug):
-        f = open('pull_request_platform.json','r')
+        file_ini = os.path.join(user_path,'Myrepo/pull_request_platform.json')
+        f = open(file_ini,'r')
         filedata = f.read()
         f.close()
         newdata = filedata.replace(old_slug,project_slug)
-        f = open('pull_request_platfor.json','w')
+        f = open(file_ini,'w')
         f.write(newdata)
         f.close()
 
 def json_modifier_connect(old_slug,project_slug):
-
-    f = open('pull_request_connect.json','r')
+    file_ini = os.path.join(user_path,'Myrepo/pull_request_connect.json')
+    f = open(file_ini,'r')
     filedata = f.read()
     f.close()
     newdata = filedata.replace(old_slug,project_slug)
-    f = open('pull_request_connect.json','w')
+    f = open(file_ini,'w')
     f.write(newdata)
     f.close()
 
 def json_modifier_v2():
-
-    f = open('pull_request_V2.json','r')
+    file_ini = os.path.join(user_path,'Myrepo/pull_request_V2.json')
+    f = open(file_ini,'r')
     filedata = f.read()
     f.close()
     newdata = filedata.replace(old_slug,project_slug)
@@ -238,11 +255,12 @@ def json_modifier_v2():
 
 
 def raise_pull_req_v2():
-
-    config.read("rest_urls.ini")
+    config = ConfigParser()
+    file_ini = os.path.join(user_path,'Myrepo/rest_urls.ini')
+    config.read(file_ini)
     rest_config = config.get('v2','config')
-
-    with open('pull_request_V2.json','r') as filedata:
+    connect_v2 = os.path.join(user_path,'Myrepo/pull_request_V2.json')
+    with open(connect_v2,'r') as filedata:
         data1 = json.load(filedata)
         response = requests.request("POST", rest_config, data=json.dumps(data1), headers=headers,auth=auth_req)
         print response.text
@@ -250,11 +268,11 @@ def raise_pull_req_v2():
     old_slug = "config"
     project_slug = "orders"
     json_modifier_connect(old_slug,project_slug)
-
-    config.read("rest_urls.ini")
+    file_ini = os.path.join(user_path,'Myrepo/rest_urls.ini')
+    config.read(file_ini)
     rest_orders = config.get('v2','orders')
-
-    with open('pull_request_V2.json','r') as filedata:
+    connect_v2 = os.path.join(user_path,'Myrepo/pull_request_V2.json')
+    with open(connect_v2,'r') as filedata:
         data1 = json.load(filedata)
         response = requests.request("POST", rest_orders, data=json.dumps(data1), headers=headers,auth=auth_req)
         print response.text
@@ -262,11 +280,11 @@ def raise_pull_req_v2():
     old_slug = "orders"
     project_slug = "contracts"
     json_modifier_connect(old_slug,project_slug)
-
-    config.read("rest_urls.ini")
+    file_ini = os.path.join(user_path,'Myrepo/rest_urls.ini')
+    config.read(file_ini)
     rest_contracts = config.get('v2','contracts')
-
-    with open('pull_request_V2.json','r') as filedata:
+    connect_v2 = os.path.join(user_path,'Myrepo/pull_request_V2.json')
+    with open(connect_v2,'r') as filedata:
         data1 = json.load(filedata)
         response = requests.request("POST", rest_contracts, data=json.dumps(data1), headers=headers,auth=auth_req)
         print response.text
@@ -274,11 +292,11 @@ def raise_pull_req_v2():
     old_slug = "contracts"
     project_slug = "unity"
     json_modifier_connect(old_slug,project_slug)
-
-    config.read("rest_urls.ini")
+    file_ini = os.path.join(user_path,'Myrepo/rest_urls.ini')
+    config.read(file_ini)
     rest_unity = config.get('v2','unity')
-
-    with open('pull_request_V2.json','r') as filedata:
+    connect_v2 = os.path.join(user_path,'Myrepo/pull_request_V2.json')
+    with open(connect_v2,'r') as filedata:
         data1 = json.load(filedata)
         response = requests.request("POST", rest_unity, data=json.dumps(data1), headers=headers,auth=auth_req)
         print response.text
@@ -286,11 +304,11 @@ def raise_pull_req_v2():
     old_slug = "unity"
     project_slug = "items"
     json_modifier_connect(old_slug,project_slug)
-
-    config.read("rest_urls.ini")
+    file_ini = os.path.join(user_path,'Myrepo/rest_urls.ini')
+    config.read(file_ini)
     rest_items = config.get('v2','items')
-
-    with open('pull_request_V2.json','r') as filedata:
+    connect_v2 = os.path.join(user_path,'Myrepo/pull_request_V2.json')
+    with open(connect_v2,'r') as filedata:
         data1 = json.load(filedata)
         response = requests.request("POST", rest_items, data=json.dumps(data1), headers=headers,auth=auth_req)
         print response.text
@@ -300,14 +318,6 @@ def raise_pull_req_v2():
     json_modifier_connect(old_slug,project_slug)
 
 
-
-#def raise_pull_req_connect():
-
-
-#def raise_pull_req_V2():
-
-#def raise_pull_request():
-
 def main():
 
     parser = argparse.ArgumentParser()
@@ -315,25 +325,43 @@ def main():
     parser.add_argument('-rel','--rel',action='store', dest='rel',help='enter valid release branch')
     parser.add_argument('-tc','--tc',action='store', dest='tc',help='turvo config should be version')
     args = parser.parse_args()
-    #for ref in commit_arr:
-    os.chdir(api_commit)
-    cwd = os.getcwd()
-    print cwd
-    #subprocess.check_output("git checkout origin develop && git remote update")
-    os.system("git pull origin develop && git checkout develop")
-    subprocess.check_output("git checkout "+args.rel, shell=True)
-    v1_merge_changes(args.tc,"saahas-maven/pom.xml")
 
-    print "completed in checking out release branch"
-    print args.tc
-    #checkout_release(args.rel)
+    for ref in commit_arr:
+
+        path = os.path.abspath(ref)
+        print path
+        os.chdir(path)
+        cwd = os.getcwd()
+        print cwd
+        #subprocess.check_output("git checkout origin develop && git remote update")
+        os.system("git pull origin develop && git remote update")
+        os.system("git checkout "+args.rel)
+        #v1_merge_changes(args.tc,path)
+
+
+    for ref in set_path:
+        lpath = os.path.abspath(ref)
+        print lpath
+        v1_merge_changes(args.tc,lpath)
+
+    print "raising pull request for platform "
+    raise_pull_req_platform()
+    print "raising pull request for connect "
+    raise_pull_req_connect()
+    print "raising pull request for V2 "
+    raise_pull_req_v2()
+
+
+
+        #subprocess.check_output("git checkout "+args.rel, shell=True)
+        #checkout_release(args.rel)
+
+        #raise_pull_req_platform()
 
     #ver = store_turvo_config_version()
 #    get_path = set_common_paths()
-'''
-    for edit_path in set_path:
-        print edit_path
-        v1_merge_changes(args.tc,edit_path)
-'''
+
+
+
 if __name__ == "__main__":
     main()

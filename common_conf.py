@@ -26,7 +26,7 @@ def branch_cut(var_arg1,var_arg2,rel_date):
     print var_arg1
     print clone_path
     #branch = 'release/'+rel_date
-    branch = "example_core1"
+    branch = "testing_pull_resp"
     print branch
     #print branch
 
