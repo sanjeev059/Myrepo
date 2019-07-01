@@ -317,6 +317,16 @@ def raise_pull_req_v2():
     project_slug = "config"
     json_modifier_connect(old_slug,project_slug)
 
+def copy_branch(rel_branch,path):
+    const = "testing_pull_req"
+    file_ini = os.path.join(user_path,path)
+    f = open(file_ini,'r')
+    filedata = f.read()
+    f.close()
+    newdata = filedata.replace(rel_branch,const)
+    f = open(file_ini,'w')
+    f.write(newdata)
+    f.close()
 
 def main():
 
@@ -325,6 +335,17 @@ def main():
     parser.add_argument('-rel','--rel',action='store', dest='rel',help='enter valid release branch')
     parser.add_argument('-tc','--tc',action='store', dest='tc',help='turvo config should be version')
     args = parser.parse_args()
+    '''
+    connect_v2 = os.path.join(user_path,'Myrepo/pull_request_V2.json')
+    platform = os.path.join(user_path,'Myrepo/pull_request_platform.json')
+    connect = os.path.join(user_path,'Myrepo/pull_request_connect.json')
+    modify_json = [platform,connect,connect_v2]
+
+    for path_modify in modify_json:
+
+        copy_branch(args.rel,path_modify)
+    '''
+
 
     for ref in commit_arr:
 
@@ -334,7 +355,7 @@ def main():
         cwd = os.getcwd()
         print cwd
         #subprocess.check_output("git checkout origin develop && git remote update")
-        os.system("git pull origin develop && git remote update")
+        os.system("git remote update")
         os.system("git checkout "+args.rel)
         #v1_merge_changes(args.tc,path)
 
