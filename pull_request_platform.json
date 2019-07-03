@@ -5,7 +5,7 @@
     "open": true,
     "closed": false,
     "fromRef": {
-        "id": "refs/heads/release/2019.06.26",
+        "id": "refs/heads/release/2019.07.03",
         "repository": {
             "slug": "api",
             "name": null,
@@ -30,6 +30,12 @@
           "user": {
              "name": "somashekar.r"
          }
+       },
+       {
+            "user": {
+                "name": "aditya.c"
+        	 }
+
         }
     ],
     "links": {

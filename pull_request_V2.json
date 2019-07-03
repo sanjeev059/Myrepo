@@ -5,7 +5,7 @@
     "open": true,
     "closed": false,
     "fromRef": {
-        "id": "refs/heads/release/2019.06.26",
+        "id": "refs/heads/release/2019.03.07",
         "repository": {
             "slug": "config",
             "name": null,
@@ -29,6 +29,11 @@
         {
             "user": {
                "name": "somashekar.r"
+           }
+        },
+        {
+            "user": {
+               "name": "ajinkya.d"
            }
         }
     ],

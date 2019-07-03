@@ -19,7 +19,8 @@ except ImportError:
 
 headers = {'content-type': 'application/json'}
 
-auth_req = ('sanjeev.d','kindJ3lly81')
+#auth_req = ('kasipathi.n','kindJ3lly81')
+auth_req = ('kasipathi.n','hotKit320')
 path  = os.environ['HOME']
 
 user_path = os.path.join(path,'workspace')
@@ -344,7 +345,7 @@ def main():
     for path_modify in modify_json:
 
         copy_branch(args.rel,path_modify)
-    '''
+
 
 
     for ref in commit_arr:
@@ -355,7 +356,7 @@ def main():
         cwd = os.getcwd()
         print cwd
         #subprocess.check_output("git checkout origin develop && git remote update")
-        os.system("git remote update")
+        os.system("git checkout develop && git pull")
         os.system("git checkout "+args.rel)
         #v1_merge_changes(args.tc,path)
 
@@ -364,7 +365,7 @@ def main():
         lpath = os.path.abspath(ref)
         print lpath
         v1_merge_changes(args.tc,lpath)
-
+    '''
     print "raising pull request for platform "
     raise_pull_req_platform()
     print "raising pull request for connect "
