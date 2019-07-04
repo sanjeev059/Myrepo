@@ -5,7 +5,7 @@
     "open": true,
     "closed": false,
     "fromRef": {
-        "id": "refs/heads/release/2019.07.03",
+        "id": "refs/heads/testing_pull_req",
         "repository": {
             "slug": "api",
             "name": null,

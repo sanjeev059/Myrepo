@@ -319,13 +319,15 @@ def raise_pull_req_v2():
     json_modifier_connect(old_slug,project_slug)
 
 def copy_branch(rel_branch,path):
-    const = "testing_pull_req"
-    file_ini = os.path.join(user_path,path)
-    f = open(file_ini,'r')
+    test_const
+    print path
+    f = open(path,'r')
     filedata = f.read()
+    print filedata
     f.close()
-    newdata = filedata.replace(rel_branch,const)
-    f = open(file_ini,'w')
+    newdata = filedata.replace(test_const,rel_branch)
+    print newdata
+    f = open(path,'w')
     f.write(newdata)
     f.close()
 
@@ -336,18 +338,15 @@ def main():
     parser.add_argument('-rel','--rel',action='store', dest='rel',help='enter valid release branch')
     parser.add_argument('-tc','--tc',action='store', dest='tc',help='turvo config should be version')
     args = parser.parse_args()
-    '''
+
     connect_v2 = os.path.join(user_path,'Myrepo/pull_request_V2.json')
     platform = os.path.join(user_path,'Myrepo/pull_request_platform.json')
     connect = os.path.join(user_path,'Myrepo/pull_request_connect.json')
     modify_json = [platform,connect,connect_v2]
 
     for path_modify in modify_json:
-
         copy_branch(args.rel,path_modify)
-
-
-
+    '''
     for ref in commit_arr:
 
         path = os.path.abspath(ref)
@@ -365,13 +364,14 @@ def main():
         lpath = os.path.abspath(ref)
         print lpath
         v1_merge_changes(args.tc,lpath)
-    '''
+
     print "raising pull request for platform "
     raise_pull_req_platform()
     print "raising pull request for connect "
     raise_pull_req_connect()
     print "raising pull request for V2 "
     raise_pull_req_v2()
+    '''
 
 
 
