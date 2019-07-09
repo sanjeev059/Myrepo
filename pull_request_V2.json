@@ -5,7 +5,7 @@
     "open": true,
     "closed": false,
     "fromRef": {
-        "id": "refs/heads/release/2019.03.07",
+        "id": "refs/heads/release/2019.07.03",
         "repository": {
             "slug": "config",
             "name": null,
@@ -15,7 +15,7 @@
         }
     },
     "toRef": {
-        "id": "refs/heads/develop",
+        "id": "refs/heads/testing_pull_resp",
         "repository": {
             "slug": "config",
             "name": null,

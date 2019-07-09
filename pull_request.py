@@ -319,7 +319,7 @@ def raise_pull_req_v2():
     json_modifier_connect(old_slug,project_slug)
 
 def copy_branch(rel_branch,path):
-    test_const
+    test_const = 'testing_pull_req'
     print path
     f = open(path,'r')
     filedata = f.read()
@@ -346,7 +346,7 @@ def main():
 
     for path_modify in modify_json:
         copy_branch(args.rel,path_modify)
-    '''
+
     for ref in commit_arr:
 
         path = os.path.abspath(ref)
@@ -371,7 +371,6 @@ def main():
     raise_pull_req_connect()
     print "raising pull request for V2 "
     raise_pull_req_v2()
-    '''
 
 
 
