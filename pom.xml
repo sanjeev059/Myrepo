@@ -15,7 +15,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-            <version>4.3.2.RELEASE</version>
+            <version>5.2.20.RELEASE</version>
 
             <!-- why provided? So that we do not cause an explicit conflict between this version of
                  spring and the sub-projects which have imported this module -->
